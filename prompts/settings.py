@@ -1,0 +1,1 @@
+PROMPT_BASE_NAME="counter"
