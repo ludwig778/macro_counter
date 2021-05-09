@@ -1,7 +1,7 @@
 default: prompt
 
 prompt:
-	python3 -m app
+	python3 -m macro_counter
 
 py:
 	python3

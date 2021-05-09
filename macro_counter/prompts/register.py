@@ -1,10 +1,10 @@
 from prompt_toolkit.completion import WordCompleter
 
-from ingredients import LiquidIngredient, SolidIngredient, ingredients
-from ingredients.fields import fields
-
-from prompts.base import BasePrompt
-from prompts.settings import PROMPT_BASE_NAME
+from macro_counter.ingredients import (LiquidIngredient, SolidIngredient,
+                                       ingredients)
+from macro_counter.ingredients.fields import fields
+from macro_counter.prompts.base import BasePrompt
+from macro_counter.settings import PROMPT_BASE_NAME
 
 
 class RegisterPrompt(BasePrompt):

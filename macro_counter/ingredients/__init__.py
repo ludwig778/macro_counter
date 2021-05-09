@@ -1,5 +1,5 @@
-from ingredients.base import LiquidIngredient, SolidIngredient
-
+from macro_counter.ingredients.base import (IngredientList, LiquidIngredient,
+                                            SolidIngredient)
 
 ingredients = {
     "tomato": SolidIngredient(

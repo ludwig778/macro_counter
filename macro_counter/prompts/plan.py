@@ -1,9 +1,8 @@
 from prompt_toolkit.completion import WordCompleter
 
-from ingredients import IngredientList, ingredients
-
-from prompts.base import BasePrompt
-from prompts.settings import PROMPT_BASE_NAME
+from macro_counter.ingredients import IngredientList, ingredients
+from macro_counter.prompts.base import BasePrompt
+from macro_counter.settings import PROMPT_BASE_NAME
 
 
 class PlanPrompt(BasePrompt):
