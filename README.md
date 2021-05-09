@@ -14,6 +14,14 @@ python3 -m pip install -r requirements.txt -r requirements.dev.txt
 python3 -c "from prompts.main import MainPrompt; MainPrompt().loop()"
 ```
 
+## Using Docker
+
+**Launch the prompt**
+
+```
+docker-compose run app prompt
+```
+
 ## Inside the prompt
 
 The prompt permit to register/update ingredients, and perform simple operations to check the macro/micro nutrients consumed.
