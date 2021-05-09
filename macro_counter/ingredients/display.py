@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-from macro_counter.ingredients.base import BaseIngredient, IngredientList
+from macro_counter.ingredients.models import BaseIngredient, IngredientList
 from macro_counter.ingredients.fields import fields
 
 
