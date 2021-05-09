@@ -1,4 +1,0 @@
-flake8
-ipython
-isort
-piprot
