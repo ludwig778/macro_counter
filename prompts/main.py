@@ -1,9 +1,9 @@
 from prompt_toolkit.completion import WordCompleter
 
-from .base import BasePrompt
-from .plan import PlanPrompt
-from .register import RegisterPrompt
-from .settings import PROMPT_BASE_NAME
+from prompts.base import BasePrompt
+from prompts.plan import PlanPrompt
+from prompts.register import RegisterPrompt
+from prompts.settings import PROMPT_BASE_NAME
 
 
 class MainPrompt(BasePrompt):

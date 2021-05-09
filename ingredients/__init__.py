@@ -1,4 +1,5 @@
-from .base import IngredientList, LiquidIngredient, SolidIngredient
+from ingredients.base import LiquidIngredient, SolidIngredient
+
 
 ingredients = {
     "tomato": SolidIngredient(

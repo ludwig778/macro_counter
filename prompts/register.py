@@ -3,8 +3,8 @@ from prompt_toolkit.completion import WordCompleter
 from ingredients import LiquidIngredient, SolidIngredient, ingredients
 from ingredients.fields import fields
 
-from .base import BasePrompt
-from .settings import PROMPT_BASE_NAME
+from prompts.base import BasePrompt
+from prompts.settings import PROMPT_BASE_NAME
 
 
 class RegisterPrompt(BasePrompt):
