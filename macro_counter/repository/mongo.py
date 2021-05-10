@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+
 from macro_counter.settings import MONGO_CONFIG, MONGO_DATABASE, TEST
 
 mongo_client = MongoClient(**MONGO_CONFIG)

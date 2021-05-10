@@ -1,6 +1,5 @@
 from os import environ
 
-
 TEST = environ.get("TEST", False)
 
 PROMPT_BASE_NAME = environ.get("PROMPOT_BASE_NAME", "counter")

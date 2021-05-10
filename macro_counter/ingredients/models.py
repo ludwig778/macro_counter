@@ -1,32 +1,67 @@
+from macro_counter.repository.mongo import ingredient_collection
 
 
-class BaseIngredient(object):
-    def __init__(self, name, units=None, **kwargs):
+class Ingredient:
+    def __init__(self, name, kind=None, units=None, attrs=None, **kwargs):
         self.name = name
+
+        if not kind:
+            raise Exception("Kind must be set")
+
+        self.kind = kind
         self.units = units or 1
-        self.attrs = {
-            k: v
-            for k, v in kwargs.items()
-            if type(v) in (int, float)
-        }
+        self.attrs = attrs or {}
+
+    @property
+    def measure(self):
+        return "gr" if self.kind == "solid" else "ml"
 
     @classmethod
     def create(cls, name, **kwargs):
-        return cls(name, **kwargs)
+        if not (obj := cls.get(name)):
+            obj = cls(name, **kwargs)
+
+            ingredient_collection.insert_one(obj.to_dict())
+
+        return obj
+
+    @classmethod
+    def list(cls, **kwargs):
+        return [
+            cls(**ingr)
+            for ingr in ingredient_collection.find(kwargs)
+        ]
+
+    @classmethod
+    def get(cls, name):
+        ingredient = ingredient_collection.find_one({"name": name})
+
+        if ingredient:
+            return cls(**ingredient)
+
+    def update(self, **kwargs):
+        self_data = self.to_dict()
+        new_data = {**self_data, **kwargs}
+
+        if self_data != new_data:
+            ingredient_collection.update_one({"name": self.name}, {"$set": new_data})
+
+            self.__dict__.update(new_data)
+
+    def delete(self):
+        return ingredient_collection.delete_one({"name": self.name})
 
     def copy(self):
-        return self.create(
-            self.name,
-            units=self.units,
-            **self.attrs
-        )
+        return self.__class__(**self.to_dict())
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}: {self.name} {self.units}{self.MEASURE}>"
+        return f"<{self.__class__.__name__}: {self.name} {self.units}{self.measure}>"
 
-    def export(self):
+    def to_dict(self):
         return {
-            "type": self.TYPE,
+            "name": self.name,
+            "units": self.units,
+            "kind": self.kind,
             "attrs": self.attrs
         }
 
@@ -40,7 +75,15 @@ class BaseIngredient(object):
 
         self.attrs = new_attrs
 
-    def __mul__(self, val):
+    def __mod__(self, val):
+        obj = self.copy()
+
+        obj.multiply(1 / obj.units)
+        obj.multiply(val)
+
+        return obj
+
+    def __mul__(self, val, normalize=False):
         obj = self.copy()
         obj.multiply(val)
 
@@ -67,21 +110,3 @@ class IngredientList(object):
                 attrs[k] += v
 
         return attrs
-
-
-class LiquidIngredient(BaseIngredient):
-    TYPE = "liquid"
-    MEASURE = "ml"
-
-    def __init__(self, *args, milliliters=None, **kwargs):
-        kwargs.setdefault("units", milliliters)
-        super().__init__(*args, **kwargs)
-
-
-class SolidIngredient(BaseIngredient):
-    TYPE = "solid"
-    MEASURE = "gr"
-
-    def __init__(self, *args, grams=None, **kwargs):
-        kwargs.setdefault("units", grams)
-        super().__init__(*args, **kwargs)

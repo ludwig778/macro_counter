@@ -1,7 +1,7 @@
 from tabulate import tabulate
 
-from macro_counter.ingredients.models import BaseIngredient, IngredientList
 from macro_counter.ingredients.fields import fields
+from macro_counter.ingredients.models import Ingredient, IngredientList
 
 
 def display(obj):
@@ -10,7 +10,7 @@ def display(obj):
     if isinstance(obj, IngredientList):
         obj_attrs = obj.sum()
 
-    elif isinstance(obj, BaseIngredient):
+    elif isinstance(obj, Ingredient):
         obj_attrs = obj.attrs
 
         data_array.append(["", obj.name])
