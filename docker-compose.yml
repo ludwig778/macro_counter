@@ -7,9 +7,9 @@ services:
       - .:/app
       - /app/.poetry
     environment:
-      MONGODB_HOST: mongodb
-      MONGODB_USERNAME: user
-      MONGODB_PASSWORD: password123
+      MACRO_COUNTER_MONGODB_HOST: mongodb
+      MACRO_COUNTER_MONGODB_USERNAME: user
+      MACRO_COUNTER_MONGODB_PASSWORD: password123
     depends_on:
       - mongodb
 
