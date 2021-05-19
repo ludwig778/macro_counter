@@ -1,7 +1,7 @@
 from tabulate import tabulate
 
-from macro_counter.ingredients.fields import fields
-from macro_counter.ingredients.models import Ingredient, IngredientList
+from macro_counter.fields import fields
+from macro_counter.models import Ingredient, IngredientList
 
 
 def display(obj):

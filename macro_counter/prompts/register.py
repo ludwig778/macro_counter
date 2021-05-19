@@ -29,15 +29,15 @@ class RegisterPrompt(BasePrompt):
 
         fullname = self.session.prompt("Name : ")
 
-        ingr_type = self.session.prompt("Type (L)iquid/(S)olid : ")
-        if ingr_type.lower() == "l":
-            attrs["type"] = "Liquid"
+        ingr_kind = self.session.prompt("Type (L)iquid/(S)olid : ")
+        if ingr_kind.lower() == "l":
+            attrs["kind"] = "Liquid"
             ingredient_class = LiquidIngredient
-        elif ingr_type.lower() == "s":
-            attrs["type"] = "Solid"
+        elif ingr_kind.lower() == "s":
+            attrs["kind"] = "Solid"
             ingredient_class = SolidIngredient
         else:
-            print(f"Wrong type : {ingr_type}")
+            print(f"Wrong kind : {ingr_kind}")
             return
 
         for k, v in fields.items():

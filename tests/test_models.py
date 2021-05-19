@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from macro_counter.ingredients.models import Ingredient, IngredientList
+from macro_counter.models import Ingredient, IngredientList
 
 
 @mark.parametrize("kwargs", [
