@@ -1,4 +1,4 @@
-from macro_counter.repository.mongo import ingredient_collection
+from macro_counter.repository import ingredient_collection
 
 
 class Ingredient:

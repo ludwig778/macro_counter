@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from macro_counter.repository.mongo import ingredient_collection
+from macro_counter.repository import ingredient_collection
 
 
 @fixture(autouse=True, scope="package")

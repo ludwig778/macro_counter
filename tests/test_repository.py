@@ -1,4 +1,4 @@
-from macro_counter.repository.mongo import mongo_client, mongo_database
+from macro_counter.repository import mongo_client, mongo_database
 
 
 def test_mongo_methods():
