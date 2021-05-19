@@ -1,12 +1,12 @@
 from pytest import fixture
 
-from macro_counter.repository import ingredient_collection
+from macro_counter.repository import mongo_repo
 
 
 @fixture(autouse=True, scope="package")
 def cleanup_mongo_repo():
-    ingredient_collection.drop()
+    mongo_repo.drop("ingredient")
 
     yield
 
-    ingredient_collection.drop()
+    mongo_repo.drop("ingredient")

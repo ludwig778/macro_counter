@@ -1,10 +1,10 @@
-from macro_counter.repository import mongo_client, mongo_database
+from macro_counter.repository import mongo_repo
 
 
 def test_mongo_methods():
-    assert mongo_client.connected
+    assert mongo_repo._client.connected
 
-    test_collection = mongo_database.test_collection
+    test_collection = mongo_repo.get_collection("collection")
     test_collection.drop()
 
     assert test_collection.insert_one({"lmao": "test"})
