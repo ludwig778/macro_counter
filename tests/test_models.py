@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from macro_counter.models import Component, ComponentList
+from macro_counter.models import Component
 
 
 @mark.parametrize("kwargs", [
