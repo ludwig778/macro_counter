@@ -1,7 +1,7 @@
 from prompt_toolkit.completion import WordCompleter
 
-from macro_counter.models import Component
 from macro_counter.fields import fields
+from macro_counter.models import Component
 from macro_counter.prompts.base import BasePrompt
 from macro_counter.prompts.state import state
 

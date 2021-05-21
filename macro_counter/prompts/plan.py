@@ -3,8 +3,8 @@ from prompt_toolkit.completion import WordCompleter
 from macro_counter.display import display
 from macro_counter.models import ComponentList
 from macro_counter.prompts.base import BasePrompt
-from macro_counter.prompts.state import state
 from macro_counter.prompts.parsers import PLAN_PARSER
+from macro_counter.prompts.state import state
 
 
 class PlanPrompt(BasePrompt):

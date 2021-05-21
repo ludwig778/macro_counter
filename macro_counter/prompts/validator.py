@@ -1,6 +1,6 @@
-from macro_counter.prompts.state import state
-
 from pyparsing import ParseFatalException
+
+from macro_counter.prompts.state import state
 
 
 def handle_parser_exception(func):
