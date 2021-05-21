@@ -3,13 +3,10 @@ name = "macro_counter"
 version = "0.1.0"
 description = "Python macro nutrient tracker."
 authors = ["Laurent Arthur <laurent.arthur75@gmail.com>"]
-
 license = "GPLv3"
-
 readme = "README.md"
-
+homepage = "https://github.com/ludwig778/macro_counter"
 repository = "https://github.com/ludwig778/macro_counter"
-
 classifiers = [
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: POSIX :: Linux",
@@ -17,12 +14,16 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8.9"
 prompt-toolkit = "^3.0.18"
 tabulate = "^0.8.9"
 pymongo = "^3.11.4"
+pyparsing = "^2.4.7"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.0"

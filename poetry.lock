@@ -334,7 +334,7 @@ zstd = ["zstandard"]
 name = "pyparsing"
 version = "2.4.7"
 description = "Python parsing module"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -479,7 +479,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.9"
-content-hash = "aac4ea437fa9b2cfba8fc0e722fa027336691bc3ebc949eb193e6c8db0bb315e"
+content-hash = "f48762fd190013a8e5a8cc3de463e569a31c6cbca4f5e4fd60eead12d08d1669"
 
 [metadata.files]
 appnope = [
