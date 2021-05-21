@@ -1,3 +1,4 @@
-from macro_counter.prompts.main import MainPrompt
+from macro_counter.prompts.root import RootPrompt
 
-MainPrompt().loop()
+
+RootPrompt().loop()

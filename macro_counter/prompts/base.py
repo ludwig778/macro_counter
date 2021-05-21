@@ -1,13 +1,30 @@
-from prompt_toolkit import PromptSession
+from enum import Enum, auto
+
+from prompt_toolkit import PromptSession, prompt
+from prompt_toolkit.history import FileHistory
+from pyparsing import ParseFatalException
 
 
-class BasePrompt(object):
-    PROMPT = None
+class PromptSignal(Enum):
+    LEAVE = auto()
+    QUIT = auto()
+
+
+class BasePrompt:
+    PROMPT_STR = None
+    BOTTOM_TOOLBAR = None
 
     def __init__(self):
         self.session = PromptSession(
-            completer=self._get_completer()
+            message=self.PROMPT_STR,
+            completer=self._get_completer(),
+            bottom_toolbar=self.BOTTOM_TOOLBAR,
+            history=FileHistory(".macro_counter_history"),
+            enable_suspend=True
         )
+
+    def prompt(self, text):
+        return prompt(text)
 
     def _get_completer(self):
         raise NotImplementedError
@@ -15,16 +32,32 @@ class BasePrompt(object):
     def loop(self):
         while True:
             try:
-                text = self.session.prompt(self.PROMPT)
-            except KeyboardInterrupt:
-                continue  # Control-C pressed. Try again.
+                signal = self._handle()
+                if signal == PromptSignal.LEAVE:
+                    break
+                if signal == PromptSignal.QUIT:
+                    return PromptSignal.QUIT
             except EOFError:
-                break  # Control-D pressed.
+                print("EOF : quitting...")
+                return PromptSignal.QUIT
+            except KeyboardInterrupt:
+                pass
 
-            text = text.strip()
+    def _handle(self):
+        text = self.session.prompt()
 
-            if self.process(text) is False:
-                break
+        if text in ("q", "quit"):
+            return PromptSignal.QUIT
+        elif text in ("l", "leave"):
+            return PromptSignal.LEAVE
 
-    def process(self, string):
-        raise NotImplementedError
+        if text:
+            try:
+                if signal := self.dispatch(text):
+                    return signal
+            except ParseFatalException as exc:
+                offset = len(self.session.message) + exc.loc
+                print(f"{' ' * offset}^ {exc.msg}")
+
+    def dispatch(self):
+        raise NotImplementedError()

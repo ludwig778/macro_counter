@@ -1,54 +1,63 @@
 from prompt_toolkit.completion import WordCompleter
 
-from macro_counter.ingredients import (LiquidIngredient, SolidIngredient,
-                                       ingredients)
-from macro_counter.ingredients.fields import fields
+from macro_counter.models import Component
+from macro_counter.fields import fields
 from macro_counter.prompts.base import BasePrompt
-from macro_counter.settings import PROMPT_BASE_NAME
+from macro_counter.prompts.state import state
 
 
 class RegisterPrompt(BasePrompt):
-    PROMPT = f"({PROMPT_BASE_NAME}:register) => "
+    PROMPT_STR = "(register) => "
 
     def _get_completer(self):
-        return WordCompleter([*ingredients.keys(), "quit"])
+        return WordCompleter([*state.components, "leave", "quit"])
 
-    def process(self, string):
-        if not string:
-            return
-        elif string == "quit":
-            return False
-        elif string in ingredients:
-            print(f"UPDATING {string}")
-            name = string
-        else:
-            print(f"CREATING {string}")
-            name = string
+    def dispatch(self, name):
+        name = name.lower()
+
+        print("Registering", name)
 
         attrs = {}
 
-        fullname = self.session.prompt("Name : ")
+        ingr_kind = self.prompt("Type (L)iquid/(S)olid : ")
 
-        ingr_kind = self.session.prompt("Type (L)iquid/(S)olid : ")
         if ingr_kind.lower() == "l":
-            attrs["kind"] = "Liquid"
-            ingredient_class = LiquidIngredient
+            kind = "liquid"
         elif ingr_kind.lower() == "s":
-            attrs["kind"] = "Solid"
-            ingredient_class = SolidIngredient
+            kind = "solid"
         else:
-            print(f"Wrong kind : {ingr_kind}")
+            print(f"Wrong kind : {kind}")
             return
 
         for k, v in fields.items():
-
-            value = self.session.prompt(f"How much {v.get('name')} : ")
+            value = self.prompt(f"How much {v.get('name')} : ")
 
             if value:
                 value = float(eval(value))
 
                 attrs[k] = value
 
-        ingredients[name] = ingredient_class(fullname, **attrs)
+        units = attrs.pop("units", None)
+
+        assert units, "Units must be set"
+
+        if component := state.components.get(name.lower()):
+            component.update(
+                kind=kind,
+                units=units,
+                attrs=attrs
+            )
+            print(f"Updating {name}")
+
+        else:
+            component = Component.create(
+                name,
+                kind=kind,
+                units=units,
+                attrs=attrs
+            )
+            state.components[name] = component
+
+            print(f"Creating {name}")
 
         print(f"Registered {name}")

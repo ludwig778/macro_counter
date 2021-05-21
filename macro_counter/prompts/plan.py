@@ -1,41 +1,49 @@
 from prompt_toolkit.completion import WordCompleter
 
-from macro_counter.ingredients import IngredientList, ingredients
+from macro_counter.display import display
+from macro_counter.models import ComponentList
 from macro_counter.prompts.base import BasePrompt
-from macro_counter.settings import PROMPT_BASE_NAME
+from macro_counter.prompts.state import state
+from macro_counter.prompts.parsers import PLAN_PARSER
 
 
 class PlanPrompt(BasePrompt):
-    PROMPT = f"({PROMPT_BASE_NAME}:plan) => "
+    PROMPT_STR = "(plan) => "
 
     def _get_completer(self):
-        return WordCompleter(["*", "+", *ingredients.keys(), "quit"])
+        return WordCompleter([
+            "+", "%", "*", "/", *state.components, "plan", "quit"
+        ])
 
-    def process(self, string):
-        if not string:
-            return
-
-        if string == "quit":
-            return False
-
-        ingr_list = IngredientList()
-
-        for sub_string in string.split("+"):
-            sub_split = list(map(str.strip, sub_string.split("*")))
-
-            if len(sub_split) > 0:
-                ingredient = ingredients.get(sub_split[0])
-
-                if len(sub_split) > 1:
-                    units = float(eval(sub_split[1]))
-                    ingredient = ingredient * (units / ingredient.units)
-                else:
-                    units = None
-
-            ingr_list.append(ingredient)
-
-        from ingredients.display import display
-
+    def dispatch(self, text):
         print()
-        display(ingr_list)
-        print()
+        list_component = ComponentList()
+
+        for component_data in PLAN_PARSER.parseString(text):
+
+            component = component_data.get("component")
+            calibration = component_data.get("calibration") or None
+            numbers = component_data.get("numbers") or []
+            operations = component_data.get("operations") or []
+
+            component = state.components.get(component.lower())
+
+            base_multiplier = 1
+            for num, multiplier in list(zip(numbers, operations))[::-1]:
+                if multiplier == "/":
+                    base_multiplier /= num
+                if multiplier == "*":
+                    base_multiplier *= num
+
+            if calibration:
+                component %= calibration
+
+            if base_multiplier != 1:
+                component *= base_multiplier
+
+            print(component, calibration, numbers, operations)
+
+            display(component)
+            list_component.append(component)
+
+        display(list_component)
