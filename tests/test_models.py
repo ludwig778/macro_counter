@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from macro_counter.models import Ingredient, IngredientList
+from macro_counter.models import Component, ComponentList
 
 
 @mark.parametrize("kwargs", [
@@ -9,34 +9,34 @@ from macro_counter.models import Ingredient, IngredientList
     {"name": "Milk",   "kind": "liquid", "units": 100, "attrs": {"fat": 12.3}},
     {"name": "Coca",   "kind": "liquid", "units": 100, "attrs": {"sugar": 50}},
 ])
-def test_create_ingredients(kwargs):
-    Ingredient.create(**kwargs)
+def test_create_components(kwargs):
+    Component.create(**kwargs)
 
 
-def test_create_ingredients_exception():
+def test_create_components_exception():
     with raises(Exception, match="Kind must be set"):
-        Ingredient.create("Vodka")
+        Component.create("Vodka")
 
 
-def test_list_ingredients():
-    assert len(Ingredient.list()) == 4
-    assert len(Ingredient.list(kind="liquid")) == 2
-    assert len(Ingredient.list(kind="solid")) == 2
+def test_list_components():
+    assert len(Component.list()) == 4
+    assert len(Component.list(kind="liquid")) == 2
+    assert len(Component.list(kind="solid")) == 2
 
 
 @mark.parametrize("name", [
     "Coca", "Tomato"
 ])
-def test_get_ingredient(name):
-    assert Ingredient.get(name)
+def test_get_component(name):
+    assert Component.get(name)
 
 
-def test_get_non_existing_ingredient():
-    assert Ingredient.get("TEST") is None
+def test_get_non_existing_component():
+    assert Component.get("TEST") is None
 
 
-def test_updating_ingredient():
-    brown_sugar = Ingredient.create("brown_sugar", kind="solid", units=100)
+def test_updating_component():
+    brown_sugar = Component.create("brown_sugar", kind="solid", units=100)
 
     old_units = brown_sugar.units
 
@@ -47,16 +47,16 @@ def test_updating_ingredient():
     assert old_units != new_units
 
 
-def test_deleting_ingredient():
-    brown_sugar = Ingredient.get("brown_sugar")
+def test_deleting_component():
+    brown_sugar = Component.get("brown_sugar")
 
     brown_sugar.delete()
 
-    assert Ingredient.get("brown_sugar") is None
+    assert Component.get("brown_sugar") is None
 
 
-def test_multiplicating_ingredient():
-    tomato = Ingredient.get("Tomato")
+def test_multiplicating_component():
+    tomato = Component.get("Tomato")
 
     assert (tomato * 10).to_dict() == {
         "name": "Tomato",
@@ -68,8 +68,8 @@ def test_multiplicating_ingredient():
     }
 
 
-def test_normalize_ingredient():
-    tomato = Ingredient.get("Tomato")
+def test_normalize_component():
+    tomato = Component.get("Tomato")
 
     assert (tomato % 28).to_dict() == {
         "name": "Tomato",

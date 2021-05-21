@@ -1,7 +1,7 @@
-from macro_counter.repository import ingredient_collection
+from macro_counter.repository import component_collection
 
 
-class Ingredient:
+class Component:
     def __init__(self, name, kind=None, units=None, attrs=None, **kwargs):
         self.name = name
 
@@ -12,50 +12,47 @@ class Ingredient:
         self.units = units or 1
         self.attrs = attrs or {}
 
-    @property
-    def measure(self):
-        return "gr" if self.kind == "solid" else "ml"
-
     @classmethod
     def create(cls, name, **kwargs):
         if not (obj := cls.get(name)):
             obj = cls(name, **kwargs)
 
-            ingredient_collection.insert_one(obj.to_dict())
+            component_collection.insert_one(obj.to_dict())
 
         return obj
+
+    @property
+    def measure(self):
+        return "gr" if self.kind == "solid" else "ml"
 
     @classmethod
     def list(cls, **kwargs):
         return [
             cls(**ingr)
-            for ingr in ingredient_collection.find(kwargs)
+            for ingr in component_collection.find(kwargs)
         ]
 
     @classmethod
     def get(cls, name):
-        ingredient = ingredient_collection.find_one({"name": name})
+        component = component_collection.find_one({"name": name})
 
-        if ingredient:
-            return cls(**ingredient)
+        if component:
+            return cls(**component)
 
     def update(self, **kwargs):
         self_data = self.to_dict()
         new_data = {**self_data, **kwargs}
 
         if self_data != new_data:
-            ingredient_collection.update_one({"name": self.name}, {"$set": new_data})
+            component_collection.update_one({"name": self.name}, {"$set": new_data})
 
             self.__dict__.update(new_data)
 
     def delete(self):
-        return ingredient_collection.delete_one({"name": self.name})
+        return component_collection.delete_one({"name": self.name})
 
     def copy(self):
         return self.__class__(**self.to_dict())
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__}: {self.name} {self.units}{self.measure}>"
 
     def to_dict(self):
         return {
@@ -65,13 +62,19 @@ class Ingredient:
             "attrs": self.attrs
         }
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.name} {self.units}{self.measure}>"
+
     def multiply(self, val):
         self.units *= val
 
         new_attrs = {}
 
         for k, v in self.attrs.items():
-            new_attrs[k] = v * val
+            if isinstance(v, str):
+                continue
+            elif v:
+                new_attrs[k] = v * val
 
         self.attrs = new_attrs
 
@@ -90,7 +93,7 @@ class Ingredient:
         return obj
 
 
-class IngredientList(object):
+class ComponentList(object):
     def __init__(self, members=None):
         self.members = members or []
 
@@ -104,7 +107,9 @@ class IngredientList(object):
             attrs["units"] += member.units
 
             for k, v in member.attrs.items():
-                if k not in attrs:
+                if isinstance(v, str):
+                    continue
+                elif k not in attrs:
                     attrs[k] = 0
 
                 attrs[k] += v

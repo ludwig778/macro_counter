@@ -35,4 +35,4 @@ mongo_repo = MongoRepository(
     **MONGO_CONFIG
 )
 
-ingredient_collection = mongo_repo.get_collection("ingredient")
+component_collection = mongo_repo.get_collection("component")

@@ -24,9 +24,9 @@ docker-compose run app prompt
 
 ## Inside the prompt
 
-The prompt permit to register/update ingredients, and perform simple operations to check the macro/micro nutrients consumed.
+The prompt permit to register/update components, and perform simple operations to check the macro/micro nutrients consumed.
 
-**Register an ingredient**
+**Register an component**
 
 Pushing enter without entering any value will provide 0.0 by default.
 
@@ -66,9 +66,9 @@ How much Trans fat :
 Registered bacon
 ```
 
-**Checking ingredient infos**
+**Checking component infos**
 
-By default, an ingredient without any multipliers, will be shown with the given amount (units).
+By default, an component without any multipliers, will be shown with the given amount (units).
 
 ```
 (counter) => plan

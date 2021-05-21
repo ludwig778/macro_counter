@@ -1,16 +1,16 @@
 from tabulate import tabulate
 
 from macro_counter.fields import fields
-from macro_counter.models import Ingredient, IngredientList
+from macro_counter.models import Component, ComponentList
 
 
 def display(obj):
     data_array = []
 
-    if isinstance(obj, IngredientList):
+    if isinstance(obj, ComponentList):
         obj_attrs = obj.sum()
 
-    elif isinstance(obj, Ingredient):
+    elif isinstance(obj, Component):
         obj_attrs = obj.attrs
 
         data_array.append(["", obj.name])
