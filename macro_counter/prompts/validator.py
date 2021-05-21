@@ -13,6 +13,6 @@ def handle_parser_exception(func):
 
 
 @handle_parser_exception
-def validate_ingredient(string, loc, expr):
+def validate_component(string, loc, expr):
     name = expr[0]
-    assert state.components.get(name), f"Ingredient {name} is not registered"
+    assert state.components.get(name), f"Component {name} is not registered"

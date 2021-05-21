@@ -1,19 +1,16 @@
-from macro_counter.prompts.validator import validate_ingredient
+from pyparsing import (CaselessLiteral, Group, OneOrMore, Optional, Word,
+                       ZeroOrMore, alphas, delimitedList, nums, printables)
 
-from pyparsing import (CaselessLiteral, Group, Optional, Word,
-                       ZeroOrMore, OneOrMore, alphas, delimitedList, nums)
+from macro_counter.prompts.validator import validate_component
 
-
-alpha = Word(alphas)
 integer = Word(nums)
 float_num = Word(nums + ".")
 
 
-INGREDIENT_PARSER = (
-    alpha("ingredient")
-    .setParseAction(validate_ingredient)
+COMPONENT_PARSER = (
+    Word(printables)("component")
+    .setParseAction(validate_component)
 )
-
 
 CALIBRATION_PARSER = (
     CaselessLiteral("%").suppress() +
@@ -36,6 +33,6 @@ MODIFIERS_PARSER = (
 )
 
 PLAN_PARSER = delimitedList(Group(OneOrMore(
-    INGREDIENT_PARSER +
+    COMPONENT_PARSER +
     Optional(MODIFIERS_PARSER)
 )), delim="+")
