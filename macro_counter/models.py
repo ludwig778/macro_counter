@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from macro_counter.repository import component_collection
 
 
@@ -71,9 +73,7 @@ class Component:
         new_attrs = {}
 
         for k, v in self.attrs.items():
-            if isinstance(v, str):
-                continue
-            elif v:
+            if v:
                 new_attrs[k] = v * val
 
         self.attrs = new_attrs
@@ -101,17 +101,15 @@ class ComponentList(object):
         self.members.append(member)
 
     def sum(self):
-        attrs = {"units": 0}
+        attrs = defaultdict(float)
 
         for member in self.members:
             attrs["units"] += member.units
 
             for k, v in member.attrs.items():
-                if isinstance(v, str):
-                    continue
-                elif k not in attrs:
+                if k not in attrs:
                     attrs[k] = 0
 
                 attrs[k] += v
 
-        return attrs
+        return dict(attrs)

@@ -1,14 +1,17 @@
-from pyparsing import (CaselessLiteral, Group, OneOrMore, Optional, Word,
-                       ZeroOrMore, alphas, delimitedList, nums, printables)
+from pyparsing import (CaselessLiteral, Group, Optional, Word, ZeroOrMore,
+                       alphas, delimitedList, nums)
 
 from macro_counter.prompts.validator import validate_component
 
 integer = Word(nums)
 float_num = Word(nums + ".")
+component = Word(alphas + "_")
 
 
-COMPONENT_PARSER = (
-    Word(printables)("component")
+COMPONENT_PARSER = Word(alphas + "_")("component")
+
+VALIDATED_COMPONENT_PARSER = (
+    Word(alphas + "_")("component")
     .setParseAction(validate_component)
 )
 
@@ -32,7 +35,43 @@ MODIFIERS_PARSER = (
     ZeroOrMore(OPERATION_PARSER)
 )
 
-PLAN_PARSER = delimitedList(Group(OneOrMore(
-    COMPONENT_PARSER +
-    Optional(MODIFIERS_PARSER)
-)), delim="+")
+ASSIGN_PARSER = (
+    component("assign") +
+    CaselessLiteral("=").suppress()
+)
+REGISTER_PARSER = (
+    CaselessLiteral("register").suppress() +
+    component("register")
+)
+UPDATE_PARSER = (
+    CaselessLiteral("update").suppress() +
+    component("update")
+)
+DELETE_PARSER = (
+    (
+        CaselessLiteral("del") |
+        CaselessLiteral("delete")
+    ) +
+    VALIDATED_COMPONENT_PARSER("delete")
+)
+
+COMPONENT_GROUP_PARSER = delimitedList(
+    Group(
+        ZeroOrMore(
+            VALIDATED_COMPONENT_PARSER +
+            Optional(MODIFIERS_PARSER)
+        )
+    ),
+    delim="+"
+)("components")
+
+PLAN_PARSER = (
+    (
+        ASSIGN_PARSER +
+        COMPONENT_GROUP_PARSER
+    ) |
+    REGISTER_PARSER |
+    UPDATE_PARSER |
+    DELETE_PARSER |
+    COMPONENT_GROUP_PARSER
+)
