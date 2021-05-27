@@ -23,6 +23,9 @@ class BasePrompt:
             enable_suspend=True
         )
 
+    def reset_completer(self):
+        self.session.completer = self._get_completer()
+
     def prompt(self, text):
         return prompt(text)
 
