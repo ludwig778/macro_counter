@@ -5,13 +5,13 @@ from macro_counter.prompts.validator import validate_component
 
 integer = Word(nums)
 float_num = Word(nums + ".")
-component = Word(alphas + "_")
+component = Word(alphas + nums + "_")
 
 
-COMPONENT_PARSER = Word(alphas + "_")("component")
+COMPONENT_PARSER = Word(alphas + nums + "_")("component")
 
 VALIDATED_COMPONENT_PARSER = (
-    Word(alphas + "_")("component")
+    COMPONENT_PARSER
     .setParseAction(validate_component)
 )
 
