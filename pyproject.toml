@@ -24,6 +24,7 @@ prompt-toolkit = "^3.0.18"
 tabulate = "^0.8.9"
 pymongo = "^3.11.4"
 pyparsing = "^2.4.7"
+dnspython = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.0"
