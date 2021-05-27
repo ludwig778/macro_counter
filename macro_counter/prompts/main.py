@@ -13,7 +13,7 @@ class MainPrompt(BasePrompt):
 
     def _get_completer(self):
         return WordCompleter([
-            "+", "%", "*", "/", "=", *state.components, "register", "delete", "quit"
+            "+", "%", "*", "/", "=", "register", "delete", "quit", *sorted(state.components)
         ])
 
     def dispatch(self, text):
