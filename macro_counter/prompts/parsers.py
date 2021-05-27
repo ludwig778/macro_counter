@@ -43,15 +43,8 @@ REGISTER_PARSER = (
     CaselessLiteral("register").suppress() +
     component("register")
 )
-UPDATE_PARSER = (
-    CaselessLiteral("update").suppress() +
-    component("update")
-)
 DELETE_PARSER = (
-    (
-        CaselessLiteral("del") |
-        CaselessLiteral("delete")
-    ) +
+    CaselessLiteral("delete") +
     VALIDATED_COMPONENT_PARSER("delete")
 )
 
@@ -71,7 +64,6 @@ PLAN_PARSER = (
         COMPONENT_GROUP_PARSER
     ) |
     REGISTER_PARSER |
-    UPDATE_PARSER |
     DELETE_PARSER |
     COMPONENT_GROUP_PARSER
 )
