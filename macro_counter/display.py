@@ -113,7 +113,7 @@ def display_details(obj, cached=None):
             unit_field: f"{((member.units / sum_attrs.get('units')) * 100):.1f}%"
         }
         raw_data = {
-            unit_field: f"{member.units:2f}{member.measure}"
+            unit_field: f"{member.units:.1f}{member.measure}"
         }
 
         for field, field_data in fields.items():
