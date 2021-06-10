@@ -10,8 +10,14 @@ def display(obj):
     if isinstance(obj, ComponentList):
         obj_attrs = obj.sum()
 
+        if all(map(lambda m: m.kind == "liquid", obj.members)):
+            measure = "ml"
+        else:
+            measure = "mg"
+
     elif isinstance(obj, Component):
         obj_attrs = obj.attrs
+        measure = obj.measure
 
         data_array.append(["", obj.name])
         data_array.append(["Units", obj.units])
@@ -35,7 +41,7 @@ def display(obj):
 
             data_array.append([
                 ("- " if field_data.get("macro") is False else "") + field_data.get("name"),
-                f"{ingr_attr_value:>.1f}",
+                f"{ingr_attr_value:>.1f}" + (measure if field_name == "units" else ""),
                 f"{percentage:>.1f}%" if percentage else ""
             ])
 
