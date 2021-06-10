@@ -1,6 +1,6 @@
 from prompt_toolkit.completion import WordCompleter
 
-from macro_counter.display import display
+from macro_counter.display import display, display_details
 from macro_counter.fields import fields
 from macro_counter.models import Component, ComponentList
 from macro_counter.prompts.base import BasePrompt
@@ -13,7 +13,7 @@ class MainPrompt(BasePrompt):
 
     def _get_completer(self):
         return WordCompleter([
-            "+", "%", "*", "/", "=", "register", "delete", "quit", *sorted(state.components)
+            "+", "%", "*", "/", "=", "register", "delete", "detail", "quit", *sorted(state.components)
         ])
 
     def dispatch(self, text):
@@ -36,6 +36,9 @@ class MainPrompt(BasePrompt):
                 name = name.lower()
 
                 self.assign(name, compound)
+
+            elif parsed.detail:
+                self.detail_compound(compound)
 
             else:
                 display(compound)
@@ -131,7 +134,7 @@ class MainPrompt(BasePrompt):
         units = self._get_units(default=units)
         kind = self._get_kind(default=kind)
 
-        component, created = self.create_or_update_component(name, kind, units, attrs)
+        component, created = self.create_or_update_component(name, kind, units, attrs, components=compound.details)
 
         if created:
             state.components[name] = component
@@ -171,7 +174,7 @@ class MainPrompt(BasePrompt):
 
         self.reset_completer()
 
-    def create_or_update_component(self, name, kind, units, attrs, component=None):
+    def create_or_update_component(self, name, kind, units, attrs, component=None, components=None):
         created = False
 
         assert units, "Units must be set"
@@ -181,7 +184,8 @@ class MainPrompt(BasePrompt):
             component.update(
                 kind=kind,
                 units=units,
-                attrs=attrs
+                attrs=attrs,
+                components=components
             )
             print(f"Updating {name}")
 
@@ -190,7 +194,8 @@ class MainPrompt(BasePrompt):
                 name,
                 kind=kind,
                 units=units,
-                attrs=attrs
+                attrs=attrs,
+                components=components
             )
             created = True
 
@@ -199,3 +204,6 @@ class MainPrompt(BasePrompt):
         state.components[name] = component
 
         return component, created
+
+    def detail_compound(self, compound):
+        display_details(compound)
