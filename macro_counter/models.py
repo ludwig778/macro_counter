@@ -103,6 +103,15 @@ class ComponentList(object):
     def append(self, member):
         self.members.append(member)
 
+    @property
+    def details(self):
+        summary = defaultdict(float)
+
+        for member in self.members:
+            summary[member.name] += member.units
+
+        return dict(summary)
+
     def sum(self):
         attrs = defaultdict(float)
 
