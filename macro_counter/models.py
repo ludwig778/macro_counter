@@ -4,7 +4,7 @@ from macro_counter.repository import component_collection
 
 
 class Component:
-    def __init__(self, name, kind=None, units=None, attrs=None, **kwargs):
+    def __init__(self, name, kind=None, units=None, attrs=None, components=None, **kwargs):
         self.name = name
 
         if not kind:
@@ -13,6 +13,8 @@ class Component:
         self.kind = kind
         self.units = units or 1
         self.attrs = attrs or {}
+
+        self.components = components or {}
 
     @classmethod
     def create(cls, name, **kwargs):
@@ -61,7 +63,8 @@ class Component:
             "name": self.name,
             "units": self.units,
             "kind": self.kind,
-            "attrs": self.attrs
+            "attrs": self.attrs,
+            "components": self.components
         }
 
     def __repr__(self):
