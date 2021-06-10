@@ -4,6 +4,32 @@ from macro_counter.fields import fields
 from macro_counter.models import Component, ComponentList
 
 
+def _get_field_name(field):
+    return (
+        fields.get(field).get("shortname") or
+        fields.get(field).get("name")
+    )
+
+
+def _get_members(obj, cached=None):
+    members = []
+
+    for name, units in obj.components.items():
+        if (
+            cached and (
+                member := cached.get(name)
+            ) or
+            (
+                member := Component.get(name)
+            )
+        ):
+            members.append(member % units)
+        else:
+            print(f"Couldn't find {name}")
+
+    return members
+
+
 def display(obj):
     data_array = []
 
@@ -46,3 +72,61 @@ def display(obj):
             ])
 
     print(tabulate(data_array))
+
+
+def display_details(obj, cached=None):
+
+    display(obj)
+
+    if isinstance(obj, ComponentList):
+        if len(obj.members) == 1:
+            obj = obj.members[0]
+
+            sum_attrs = {
+                "units": obj.units,
+                **obj.attrs
+            }
+            members = _get_members(obj, cached=cached)
+        else:
+            sum_attrs = obj.sum()
+            members = obj.members
+
+    elif isinstance(obj, Component):
+        sum_attrs = obj.attrs
+
+        if obj.components:
+            members = _get_members(obj, cached=cached)
+
+        else:
+            return
+
+    else:
+        raise Exception("Error")
+
+    data_array = []
+
+    unit_field = _get_field_name("units")
+
+    for member in members:
+        main_data = {
+            "name": member.name,
+            unit_field: f"{((member.units / sum_attrs.get('units')) * 100):.1f}%"
+        }
+        raw_data = {
+            unit_field: f"{member.units:2f}{member.measure}"
+        }
+
+        for field, field_data in fields.items():
+            attr = member.attrs.get(field)
+
+            if attr:
+                field_name = _get_field_name(field)
+
+                main_data[field_name] = f"{((attr / sum_attrs.get(field)) * 100):.1f}%"
+                raw_data[field_name] = f"{attr:.1f}"
+
+        data_array += [main_data, raw_data, {}]
+
+    print()
+
+    print(tabulate(data_array, headers="keys"))
