@@ -43,6 +43,10 @@ REGISTER_PARSER = (
     CaselessLiteral("register").suppress() +
     component("register")
 )
+DETAIL_PARSER = (
+    CaselessLiteral("detail")("detail")
+    .setParseAction(lambda *args: True)
+)
 DELETE_PARSER = (
     CaselessLiteral("delete") +
     VALIDATED_COMPONENT_PARSER("delete")
@@ -61,6 +65,10 @@ COMPONENT_GROUP_PARSER = delimitedList(
 PLAN_PARSER = (
     (
         ASSIGN_PARSER +
+        COMPONENT_GROUP_PARSER
+    ) |
+    (
+        DETAIL_PARSER +
         COMPONENT_GROUP_PARSER
     ) |
     REGISTER_PARSER |
