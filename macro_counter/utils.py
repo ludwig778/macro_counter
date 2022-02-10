@@ -1,2 +1,9 @@
-def check_boolean(value):
-    return isinstance(value, str) and value.lower() in ("true", "1", "yes")
+from typing import Any
+
+
+def is_float(element: Any) -> bool:
+    try:
+        float(element)
+        return True
+    except ValueError:
+        return False

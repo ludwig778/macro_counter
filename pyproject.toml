@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "macro_counter"
-version = "0.1.7"
+version = "0.2.0"
 description = "Python macro nutrient counter."
 authors = ["Laurent Arthur <laurent.arthur75@gmail.com>"]
 license = "GPLv3"
@@ -25,6 +25,7 @@ tabulate = "^0.8.9"
 pymongo = "^3.11.4"
 pyparsing = "^2.4.7"
 dnspython = "^2.1.0"
+pydantic = "^1.9.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.0"
@@ -34,6 +35,9 @@ pytest = "^6.2.4"
 ipython = "^7.23.1"
 pytest-cov = "^2.11.1"
 pytest-env = "^0.6.2"
+mypy = "^0.931"
+types-tabulate = "^0.8.5"
+black = "^22.1.0"
 
 [tool.poetry.scripts]
 macro_counter = "macro_counter:main"

@@ -1,6 +1,10 @@
-from macro_counter.prompts.main import MainPrompt
+from macro_counter.app.prompt import AppPrompt
 
 
 def main():
-    prompt = MainPrompt()
+    prompt = AppPrompt()
     prompt.loop()
+
+
+if __name__ == "__main__":
+    main()

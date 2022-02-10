@@ -1,8 +1,94 @@
-from collections import defaultdict
+from typing import Optional
 
-from macro_counter.repository import component_collection
+from pydantic import BaseModel
+from pydantic import Field as PydanticField
+from pydantic import validator
 
 
+class ComponentKind:
+    SOLID = "solid"
+    LIQUID = "liquid"
+
+
+class Component(BaseModel):
+    name: str
+    kind: str
+
+    units: float = 1.0
+    attrs: dict = PydanticField(default_factory=dict)
+
+    @validator("kind")
+    def validate_kind(cls, value):
+        if value not in ("solid", "liquid"):
+            raise ValueError('Component kind must be either "solid" or "liquid"')
+        return value
+
+    class Config:
+        extra = "ignore"
+
+    def copy(self):
+        return Component(
+            name=self.name, kind=self.kind, units=self.units, attrs=self.attrs
+        )
+
+    def multiply(self, val):
+        self.units *= val
+
+        new_attrs = {}
+
+        for k, v in self.attrs.items():
+            if v:
+                new_attrs[k] = v * val
+
+        self.attrs = new_attrs
+
+    def __add__(self, other):
+        obj = self.copy()
+
+        obj.units += other.units
+
+        for k, v in other.attrs.items():
+            if k not in obj.attrs:
+                obj.attrs[k] = 0
+
+            obj.attrs[k] += v
+
+        return obj
+
+    def __mod__(self, val):
+        obj = self.copy()
+
+        obj.multiply(1 / obj.units)
+        obj.multiply(val)
+
+        return obj
+
+    def __mul__(self, val):
+        obj = self.copy()
+        obj.multiply(val)
+
+        return obj
+
+    def __truediv__(self, val):
+        obj = self.copy()
+        obj.multiply(1 / val)
+
+        return obj
+
+
+class Field(BaseModel):
+    label: str
+    fullname: str
+    shortname: Optional[str]
+    macro: bool = False
+    show_percents: bool = False
+
+    @property
+    def name(self):
+        return self.shortname or self.fullname
+
+
+"""
 class Component:
     def __init__(self, name, kind=None, units=None, attrs=None, components=None, **kwargs):
         self.name = name
@@ -125,3 +211,4 @@ class ComponentList(object):
                 attrs[k] += v
 
         return dict(attrs)
+"""

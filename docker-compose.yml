@@ -7,6 +7,7 @@ services:
       - .:/app
       - /app/.poetry
     environment:
+      MACRO_COUNTER_MONGODB_DATABASE: macro_counter
       MACRO_COUNTER_MONGODB_HOST: mongodb
       MACRO_COUNTER_MONGODB_USERNAME: user
       MACRO_COUNTER_MONGODB_PASSWORD: password123
