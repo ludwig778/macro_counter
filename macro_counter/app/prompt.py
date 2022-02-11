@@ -48,6 +48,9 @@ class AppPrompt:
         if self.adapters.current is self.adapters.mongo:
             self.print("Using mongo store")
         else:
+            if self.adapters.mongo is not None:
+                self.print("Unable to connect to the configured mongo cluster")
+
             self.print("Using local file store")
 
         self.completer = None

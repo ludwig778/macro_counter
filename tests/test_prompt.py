@@ -121,6 +121,23 @@ def test_prompt_leave(input, prompt_redirect):
     assert "leaving..." in prompt_redirect.outputs
 
 
+def test_prompt_on_failing_mongo_settings(prompt_redirect, failing_mongo_settings):
+    MainPrompt().loop()
+
+    assert (
+        "Unable to connect to the configured mongo cluster" in prompt_redirect.outputs
+    )
+    assert "Using local file store" in prompt_redirect.outputs
+
+
+def test_prompt_on_incomplete_mongo_settings(
+    prompt_redirect, incomplete_mongo_settings
+):
+    MainPrompt().loop()
+
+    assert "Using local file store" in prompt_redirect.outputs
+
+
 def test_prompt_delete_component(prompt_redirect, mongo_repository):
     prompt_redirect.set_inputs("delete Tomato_100gr")
 

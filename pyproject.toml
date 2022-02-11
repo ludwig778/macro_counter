@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "macro_counter"
-version = "0.2.1"
+version = "0.2.2"
 description = "Python macro nutrient counter."
 authors = ["Laurent Arthur <laurent.arthur75@gmail.com>"]
 license = "GPLv3"
