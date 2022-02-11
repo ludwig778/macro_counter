@@ -4,10 +4,10 @@ Convenient terminal application to keep track of calories/macros with a simple p
 
 ## Installation
 
-Macro counter can be installed from test PyPI using a little bit customized `pip` command:
+Macro counter can be installed using the `pip3` command:
 
 ```
-pip3 install --upgrade -i https://test.pypi.org/simple/ --extra-index-url https://pypi.python.org/simple macro_counter
+pip3 install macro_counter
 ```
 
 ## Usage
