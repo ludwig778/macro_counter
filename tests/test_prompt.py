@@ -380,6 +380,7 @@ def test_prompt_direct_component_assignment_raise_with_unknown_components(
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Using mongo store",
         ">>> Smoothie_red_100gr = Raspberry + Blueberry + Water",
         "No component Raspberry has been found: skipping",
         "No component Blueberry has been found: skipping",
@@ -568,6 +569,7 @@ def test_prompt_show_single_component(prompt_redirect, mongo_repository):
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Using mongo store",
         ">>> Orange_Juice_100ml",
         "--------  --------  -----\n"
         "Calories  110.0\n"
@@ -587,6 +589,7 @@ def test_prompt_show_summed_multiple_component(prompt_redirect, mongo_repository
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Using mongo store",
         ">>> Tomato_100gr + Mozzarella_100gr",
         "----------------------  --------  -----\n"
         "Calories                277.0\n"
@@ -610,6 +613,7 @@ def test_prompt_show_detailed_multiple_component(prompt_redirect, mongo_reposito
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Using mongo store",
         ">>> detail Tomato_100gr + Mozzarella_100gr * 2",
         "Name              Units    Cal    Prot    Carb    Fiber    Sugar    Fat    Sat     Mono    Poly\n"
         "----------------  -------  -----  ------  ------  -------  -------  -----  ------  ------  ------\n"

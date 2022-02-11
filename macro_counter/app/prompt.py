@@ -45,6 +45,11 @@ class AppPrompt:
         self.state = PromptState.STOPPED
         self.history = FileHistory(".macro_counter_history")
 
+        if self.adapters.current is self.adapters.mongo:
+            self.print("Using mongo store")
+        else:
+            self.print("Using local file store")
+
         self.completer = None
         self.reset_completer()
 
