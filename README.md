@@ -10,6 +10,31 @@ Macro counter can be installed using the `pip3` command:
 pip3 install macro_counter
 ```
 
+## Configuration
+
+You can configure the app either by using configuration file, created automatically on first use, (by default in ~/.config/macro_counter/config.json) or by using environment variables.
+
+You can set the configuration file path by using the MACRO_COUNTER_CONFIG_PATH environment variable.
+
+File configuration fields can be overrided by some environment variables
+
+```
+{
+  "mongo_settings": {
+    "username": null,   # overrided by MACRO_COUNTER_MONGODB_USERNAME
+    "password": null,   # overrided by MACRO_COUNTER_MONGODB_PASSWORD
+    "database": null,   # overrided by MACRO_COUNTER_MONGODB_DATABASE
+    "host": null,       # overrided by MACRO_COUNTER_MONGODB_HOST
+    "port": 27017,      # overrided by MACRO_COUNTER_MONGODB_PORT
+    "srv_mode": false,  # overrided by MACRO_COUNTER_MONGODB_SRV_MODE
+    "timeout_ms": 2000  # overrided by MACRO_COUNTER_MONGODB_TIMEOUT_MS
+  },
+  "local_store_path": null  # overrided by MACRO_COUNTER_LOCAL_STORE_PATH
+}
+```
+
+If MongoDB connection doesn't work or settings are missing, local file store will keep the data, located at ~/.config/macro_counter/store.json by default.
+
 ## Usage
 
 ### CLI
