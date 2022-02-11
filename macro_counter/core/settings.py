@@ -19,6 +19,10 @@ class MongoSettings(BaseModel):
     srv_mode: Optional[bool] = False
     timeout_ms: Optional[int] = 2000
 
+    @property
+    def is_valid(self):
+        return all([self.username, self.password, self.database, self.host])
+
 
 class EnvSettings(BaseModel):
     config_path: Optional[str] = environ.get("MACRO_COUNTER_CONFIG_PATH")
