@@ -1,7 +1,7 @@
 ARGS = $(filter-out $@,$(MAKECMDGOALS))
 
-
 TEST_ARGS = -vvss
+
 
 default: prompt
 
@@ -45,16 +45,11 @@ cov:
 cov_html:
 	pytest  ${TEST_ARGS} --cov=macro_counter --cov-report html:coverage_html
 
+sure: tests lint mypy isort black piprot
+
 publish:
 	poetry build
 	poetry publish
-
-test_publish:
-	poetry build
-	poetry config repositories.testpypi https://test.pypi.org/legacy/
-	poetry publish -r testpypi
-
-sure: tests lint mypy isort black piprot
 
 clean:
 	rm -rf coverage_html .coverage .mypy_cache .pytest_cache
