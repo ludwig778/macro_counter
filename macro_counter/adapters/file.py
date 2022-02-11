@@ -1,5 +1,6 @@
 from json import dump, load
 from pathlib import Path
+from shutil import rmtree
 from typing import Optional
 
 
@@ -20,6 +21,9 @@ class FileAdapter:
 
     def delete(self):
         self.path.unlink()
+
+    def delete_dir(self):
+        rmtree(self.path.parent)
 
     def load(self) -> dict:
         with open(self.path) as fd:

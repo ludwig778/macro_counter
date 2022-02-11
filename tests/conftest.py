@@ -1,5 +1,4 @@
 from pathlib import Path
-from shutil import rmtree
 
 from pytest import fixture
 
@@ -58,7 +57,7 @@ def local_repository(adapters):
     repo.delete_all()
 
     file_adapter.delete()
-    rmtree(file_adapter.path.parent)
+    file_adapter.delete_dir()
 
 
 @fixture(scope="function")
