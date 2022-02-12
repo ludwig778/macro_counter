@@ -46,7 +46,6 @@ def local_repository(adapters):
     repo.delete_all()
 
     file_adapter.delete()
-    file_adapter.delete_dir()
 
 
 @fixture(scope="function")

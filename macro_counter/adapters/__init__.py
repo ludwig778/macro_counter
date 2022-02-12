@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from macro_counter.adapters.file import FileAdapter
 from macro_counter.adapters.mongo import MongoAdapter
-from macro_counter.core.settings import get_settings
+from macro_counter.core.settings import create_config_file_if_missing, get_settings
 
 AdapterInstance = Union[FileAdapter, MongoAdapter]
 
@@ -20,6 +20,9 @@ class Adapters(BaseModel):
 
 def get_adapters() -> Adapters:
     settings = get_settings()
+
+    if settings.config_path:
+        create_config_file_if_missing(settings)
 
     mongo = (
         MongoAdapter(settings.mongo_settings)

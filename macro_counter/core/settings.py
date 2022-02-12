@@ -100,7 +100,7 @@ def get_settings():
     return app_settings
 
 
-def create_config_file(settings: AppSettings):
+def create_config_file_if_missing(settings: AppSettings):
     if not settings.config_path:
         return
 
