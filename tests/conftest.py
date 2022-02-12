@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from pytest import fixture
 
 from macro_counter.adapters import get_adapters
@@ -9,15 +7,6 @@ from macro_counter.repositories.components import component_repository_factory
 
 @fixture(scope="function")
 def adapters(monkeypatch):
-    def get_mocked_settings():
-        settings = get_settings()
-
-        settings.local_store_path = Path().home() / ".testing" / "local_store.json"
-
-        return settings
-
-    monkeypatch.setattr("macro_counter.adapters.get_settings", get_mocked_settings)
-
     yield get_adapters()
 
 

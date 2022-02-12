@@ -6,8 +6,14 @@ from pydantic import BaseModel
 
 from macro_counter.adapters.file import FileAdapter
 
-DEFAULT_CONFIG_PATH = Path.home() / ".config" / "macro_counter" / "config.json"
-DEFAULT_STORE_PATH = Path.home() / ".config" / "macro_counter" / "store.json"
+TESTING: bool = bool(environ.get("MACRO_COUNTER_TEST"))
+
+BASE_PATH: Path = Path.home() / (
+    ".testing" if TESTING else Path(".config", "macro_counter")
+)
+
+DEFAULT_CONFIG_PATH: Path = BASE_PATH / "config.json"
+DEFAULT_STORE_PATH: Path = BASE_PATH / "store.json"
 
 
 class MongoSettings(BaseModel):
@@ -44,6 +50,7 @@ class FileSettings(BaseModel):
 
 
 class AppSettings(BaseModel):
+    test: bool = TESTING
     env_settings: EnvSettings
     file_settings: FileSettings
 
@@ -69,12 +76,10 @@ def get_settings():
 
         config_file = FileAdapter(config_path)
 
-        if not config_path.exists():
-            print(f"Empty setting file created: {config_path}")
-
-            config_file.create(FileSettings().dict())
-
-    file_settings = FileSettings(**config_file.load())
+    if config_file.path.exists():
+        file_settings = FileSettings(**config_file.load())
+    else:
+        file_settings = FileSettings()
 
     app_settings = AppSettings(
         env_settings=env_settings,
@@ -93,3 +98,16 @@ def get_settings():
     )
 
     return app_settings
+
+
+def create_config_file(settings: AppSettings):
+    if not settings.config_path:
+        return
+
+    config_file = FileAdapter(settings.config_path)
+
+    if not config_file.path.exists():
+        print(f"Empty setting file created: {config_file.path}")
+
+        config_file.create()
+        config_file.save(FileSettings().dict())
