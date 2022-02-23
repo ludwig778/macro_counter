@@ -13,10 +13,10 @@ sh:
 	bash
 
 py:
-	ipython
+	ipython ${ARGS}
 
 lint:
-	flake8
+	flake8 .
 
 isort:
 	isort macro_counter/ tests/
@@ -25,10 +25,13 @@ black:
 	black .
 
 mypy:
-	mypy macro_counter
+	mypy .
 
 piprot:
 	piprot pyproject.toml
+
+format: isort black
+sure: tests lint mypy piprot
 
 debug:
 	while :; do inotifywait -e modify -r .;make tests;sleep .2;done
@@ -44,8 +47,6 @@ cov:
 
 cov_html:
 	pytest  ${TEST_ARGS} --cov=macro_counter --cov-report html:coverage_html
-
-sure: tests lint mypy isort black piprot
 
 publish:
 	poetry build
