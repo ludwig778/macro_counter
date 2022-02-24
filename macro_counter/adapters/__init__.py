@@ -1,16 +1,16 @@
 from typing import Optional, Union
 
+from hartware_lib.adapters.file import FileAdapter
 from pydantic import BaseModel
 
-from macro_counter.adapters.file import FileAdapter
 from macro_counter.adapters.mongo import MongoAdapter
-from macro_counter.core.settings import create_config_file_if_missing, get_settings
+from macro_counter.core.settings import get_settings
 
 AdapterInstance = Union[FileAdapter, MongoAdapter]
 
 
 class Adapters(BaseModel):
-    file: FileAdapter
+    local_store: FileAdapter
     mongo: Optional[MongoAdapter]
     current: AdapterInstance
 
@@ -21,17 +21,16 @@ class Adapters(BaseModel):
 def get_adapters() -> Adapters:
     settings = get_settings()
 
-    if settings.config_path:
-        create_config_file_if_missing(settings)
-
     mongo = (
         MongoAdapter(settings.mongo_settings)
         if settings.mongo_settings.is_valid
         else None
     )
-    file = FileAdapter(settings.local_store_path)
-    file.create()
+    local_store = FileAdapter(settings.local_store.path)
+    local_store.create_parent_dir()
 
     return Adapters(
-        mongo=mongo, file=file, current=mongo if mongo and mongo.connected else file
+        mongo=mongo,
+        local_store=local_store,
+        current=mongo if mongo and mongo.connected else local_store,
     )

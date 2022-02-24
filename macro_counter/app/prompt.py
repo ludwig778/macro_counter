@@ -13,7 +13,7 @@ from macro_counter.exceptions import ComponentDoesNotExist
 from macro_counter.fields import attrs_fields, macro_fields, unit_field
 from macro_counter.models import Component, ComponentKind
 from macro_counter.repositories.components import component_repository_factory
-from macro_counter.utils import is_float
+from macro_counter.utils.validators import is_float
 
 
 class PromptSignal(Enum):
@@ -39,9 +39,7 @@ def get_measure(component: Component):
 class AppPrompt:
     def __init__(self):
         self.adapters = get_adapters()
-        self.repo = component_repository_factory(self.adapters.current)(
-            self.adapters.current
-        )
+        self.repo = component_repository_factory(self.adapters.current)
         self.state = PromptState.STOPPED
         self.history = FileHistory(".macro_counter_history")
 
@@ -52,6 +50,8 @@ class AppPrompt:
                 self.print("Unable to connect to the configured mongo cluster")
 
             self.print("Using local file store")
+            if not self.adapters.local_store.exists():
+                self.adapters.local_store.write_json({})
 
         self.completer = None
         self.reset_completer()
