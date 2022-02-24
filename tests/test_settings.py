@@ -24,6 +24,32 @@ def test_settings_with_default_docker_env_variables():
     }
 
 
+def test_settings_without_docker_env_variables(monkeypatch):
+    monkeypatch.delenv("MACRO_COUNTER_TEST")
+    monkeypatch.delenv("MACRO_COUNTER_MONGODB_USERNAME")
+    monkeypatch.delenv("MACRO_COUNTER_MONGODB_PASSWORD")
+    monkeypatch.delenv("MACRO_COUNTER_MONGODB_HOST")
+    monkeypatch.delenv("MACRO_COUNTER_MONGODB_DATABASE")
+    monkeypatch.delenv("MACRO_COUNTER_CONFIG_PATH")
+    monkeypatch.delenv("MACRO_COUNTER_LOCAL_STORE_PATH")
+
+    assert get_settings().dict() == {
+        "test": False,
+        "debug": False,
+        "config": {"path": Path("/root/.config/macro_counter/config.json")},
+        "mongo_settings": {
+            "database": "",
+            "host": "",
+            "password": "",
+            "port": 27017,
+            "srv_mode": False,
+            "timeout_ms": 2000,
+            "username": "",
+        },
+        "local_store": {"path": Path("/root/.config/macro_counter/store.json")},
+    }
+
+
 def test_settings_with_only_env_variables(monkeypatch):
     monkeypatch.setenv("MACRO_COUNTER_TEST", "true")
     monkeypatch.setenv("MACRO_COUNTER_DEBUG", "false")
