@@ -13,6 +13,8 @@ from macro_counter.exceptions import ComponentDoesNotExist
 from macro_counter.fields import attrs_fields, macro_fields, unit_field
 from macro_counter.models import Component, ComponentKind
 from macro_counter.repositories.components import component_repository_factory
+from macro_counter.settings import get_settings
+from macro_counter.utils.settings import create_config_file
 from macro_counter.utils.validators import is_float
 
 
@@ -38,10 +40,16 @@ def get_measure(component: Component):
 
 class AppPrompt:
     def __init__(self):
-        self.adapters = get_adapters()
+        self.settings = get_settings()
+        self.adapters = get_adapters(self.settings)
         self.repo = component_repository_factory(self.adapters.current)
         self.state = PromptState.STOPPED
         self.history = FileHistory(".macro_counter_history")
+
+        if not self.settings.config.path.exists():
+            create_config_file(self.settings)
+
+            self.print(f"Empty setting file created: {self.settings.config.path}")
 
         if self.adapters.current is self.adapters.mongo:
             self.print("Using mongo store")

@@ -4,7 +4,7 @@ from hartware_lib.adapters.file import FileAdapter
 from pydantic import BaseModel
 
 from macro_counter.adapters.mongo import MongoAdapter
-from macro_counter.settings import get_settings
+from macro_counter.settings import AppSettings
 
 AdapterInstance = Union[FileAdapter, MongoAdapter]
 
@@ -18,9 +18,7 @@ class Adapters(BaseModel):
         arbitrary_types_allowed = True
 
 
-def get_adapters() -> Adapters:
-    settings = get_settings()
-
+def get_adapters(settings: AppSettings) -> Adapters:
     mongo = (
         MongoAdapter(settings.mongo_settings)
         if settings.mongo_settings.is_valid

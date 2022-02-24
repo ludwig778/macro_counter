@@ -65,6 +65,10 @@ def prompt_redirect(monkeypatch):
             self.inputs = input_generator([])
             self.outputs = []
 
+        def reset(self):
+            self.inputs = input_generator([])
+            self.outputs = []
+
         def set_inputs(self, *inputs):
             self.inputs = input_generator(inputs)
 
@@ -397,6 +401,7 @@ def test_prompt_direct_component_assignment_raise_with_unknown_components(
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Empty setting file created: .testing/macro_counter/config.json",
         "Using mongo store",
         ">>> Smoothie_red_100gr = Raspberry + Blueberry + Water",
         "No component Raspberry has been found: skipping",
@@ -586,6 +591,7 @@ def test_prompt_show_single_component(prompt_redirect, mongo_repository):
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Empty setting file created: .testing/macro_counter/config.json",
         "Using mongo store",
         ">>> Orange_Juice_100ml",
         "--------  --------  -----\n"
@@ -606,6 +612,7 @@ def test_prompt_show_summed_multiple_component(prompt_redirect, mongo_repository
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Empty setting file created: .testing/macro_counter/config.json",
         "Using mongo store",
         ">>> Tomato_100gr + Mozzarella_100gr",
         "----------------------  --------  -----\n"
@@ -630,6 +637,7 @@ def test_prompt_show_detailed_multiple_component(prompt_redirect, mongo_reposito
     MainPrompt().loop()
 
     assert prompt_redirect.outputs == [
+        "Empty setting file created: .testing/macro_counter/config.json",
         "Using mongo store",
         ">>> detail Tomato_100gr + Mozzarella_100gr * 2",
         "Name              Units    Cal    Prot    Carb    Fiber    Sugar    Fat    Sat     Mono    Poly\n"
@@ -642,3 +650,21 @@ def test_prompt_show_detailed_multiple_component(prompt_redirect, mongo_reposito
         "Total             300.0    536.0  40.7    8.3     1.2      3.4      39.0   24.6    10.6    1.2",
         "EOF : quitting...",
     ]
+
+
+def test_prompt_check_configuration_generated_once(prompt_redirect):
+    MainPrompt().loop()
+
+    assert (
+        "Empty setting file created: .testing/macro_counter/config.json"
+        in prompt_redirect.outputs
+    )
+
+    prompt_redirect.reset()
+
+    MainPrompt().loop()
+
+    assert (
+        "Empty setting file created: .testing/macro_counter/config.json"
+        not in prompt_redirect.outputs
+    )

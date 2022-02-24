@@ -19,8 +19,13 @@ def clean_test_directory_():
 
 
 @fixture(scope="function")
-def adapters():
-    yield get_adapters()
+def settings():
+    yield get_settings()
+
+
+@fixture(scope="function")
+def adapters(settings):
+    yield get_adapters(settings)
 
 
 @fixture(scope="function")
@@ -32,7 +37,7 @@ def failing_mongo_settings(monkeypatch):
 
         return settings
 
-    monkeypatch.setattr("macro_counter.adapters.get_settings", get_mocked_settings)
+    monkeypatch.setattr("macro_counter.app.prompt.get_settings", get_mocked_settings)
 
 
 @fixture(scope="function")
@@ -44,7 +49,7 @@ def incomplete_mongo_settings(monkeypatch):
 
         return settings
 
-    monkeypatch.setattr("macro_counter.adapters.get_settings", get_mocked_settings)
+    monkeypatch.setattr("macro_counter.app.prompt.get_settings", get_mocked_settings)
 
 
 @fixture(scope="function")
