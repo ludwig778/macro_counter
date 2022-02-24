@@ -1,32 +1,34 @@
 from pymongo import MongoClient
+from pymongo.collection import Collection
+from pymongo.database import Database
 from pymongo.errors import ServerSelectionTimeoutError
 
 
 class MongoAdapter:
     def __init__(self, config):
-        self.connect(config)
+        self.config = config
 
-    def connect(self, config):
-        self._client = MongoClient(
-            self.format_uri(config), serverSelectionTimeoutMS=config.timeout_ms
+        self.client = MongoClient(
+            host=self.uri, serverSelectionTimeoutMS=self.config.timeout_ms
         )
-        self.database = getattr(self._client, config.database)
+        self.database: Database = self.client[self.config.database]
 
     @property
-    def connected(self):
+    def connected(self) -> bool:
         try:
-            self._client.server_info()
+            self.client.server_info()
             return True
         except ServerSelectionTimeoutError:
             return False
 
-    def get_collection(self, collection_name: str):
-        return getattr(self.database, collection_name)
+    def get_collection(self, name: str) -> Collection:
+        return self.database[name]
 
-    def format_uri(self, config):
-        if config.srv_mode:
-            uri = "mongodb+srv://{username}:{password}@{host}/{database}?retryWrites=true&w=majority"
+    @property
+    def uri(self) -> str:
+        if self.config.srv_mode:
+            raw_uri = "mongodb+srv://{username}:{password}@{host}/{database}?retryWrites=true&w=majority"
         else:
-            uri = "mongodb://{username}:{password}@{host}:{port}/{database}?authSource=admin"
+            raw_uri = "mongodb://{username}:{password}@{host}:{port}/{database}?authSource=admin"
 
-        return uri.format(**config.dict())
+        return raw_uri.format(**self.config.dict())
