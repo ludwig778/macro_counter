@@ -4,8 +4,8 @@ from hartware_lib.adapters.directory import DirectoryAdapter
 from pytest import fixture
 
 from macro_counter.adapters import get_adapters
-from macro_counter.core.settings import get_settings
 from macro_counter.repositories.components import component_repository_factory
+from macro_counter.settings import get_settings
 
 
 @fixture(scope="function", autouse=True)

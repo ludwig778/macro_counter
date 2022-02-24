@@ -4,7 +4,6 @@ from hartware_lib.adapters.file import FileAdapter
 from hartware_lib.pydantic.field_types import BooleanFromString
 from pydantic import BaseSettings, Field
 
-from macro_counter.utils.json import PathEncoder
 from macro_counter.utils.pydantic import use_env_variables_over_config_file
 
 BASE_PATH: Path = Path.home() / ".config" / "macro_counter"
@@ -68,23 +67,9 @@ def get_settings():
     """
 
     local_config_settings = LocalConfigSettings()
+    local_config_file = FileAdapter(file_path=local_config_settings.path)
 
-    config_file = FileAdapter(file_path=local_config_settings.path)
-    if config_file.exists():
-        return AppSettings(
-            **config_file.read_json()
-        )  # mongo_settings={"host": "LMAO"})
+    if local_config_file.exists():
+        return AppSettings(**local_config_file.read_json())
 
-    return AppSettings()  # mongo_settings={"host": "LMAO"})
-
-
-def create_config_file(settings: AppSettings):
-    config_file = FileAdapter(file_path=settings.config.path)
-
-    if not config_file.exists():
-        print(f"Empty setting file created: {settings.config.path}")
-
-        config_file.create_parent_dir()
-        config_file.write_json(
-            settings.dict(exclude={"config", "test", "debug"}), cls=PathEncoder
-        )
+    return AppSettings()

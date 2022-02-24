@@ -4,7 +4,7 @@ from hartware_lib.adapters.file import FileAdapter
 from pydantic import BaseModel
 
 from macro_counter.adapters.mongo import MongoAdapter
-from macro_counter.core.settings import get_settings
+from macro_counter.settings import get_settings
 
 AdapterInstance = Union[FileAdapter, MongoAdapter]
 

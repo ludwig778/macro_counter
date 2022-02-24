@@ -2,7 +2,8 @@ from pathlib import Path
 
 from hartware_lib.adapters.file import FileAdapter
 
-from macro_counter.core.settings import create_config_file, get_settings
+from macro_counter.settings import get_settings
+from macro_counter.utils.settings import create_config_file
 
 
 def test_settings_with_default_docker_env_variables():
