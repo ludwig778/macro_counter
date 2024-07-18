@@ -7,13 +7,14 @@ from prompt_toolkit.history import FileHistory
 from pyparsing import ParseFatalException
 from tabulate import tabulate
 
-from macro_counter.adapters import get_adapters
+from macro_counter.adapters import Adapters
 from macro_counter.app.parsers import app_parser
 from macro_counter.exceptions import ComponentDoesNotExist
-from macro_counter.fields import attrs_fields, macro_fields, unit_field
-from macro_counter.models import Component, ComponentKind
-from macro_counter.repositories.components import component_repository_factory
-from macro_counter.settings import get_settings
+from macro_counter.models import (Component, ComponentKind, attrs_fields,
+                                  macro_fields, price_field, unit_field)
+from macro_counter.repositories.local import LocalComponentRepository
+from macro_counter.settings import AppSettings
+from macro_counter.utils.float import format_compact_float
 from macro_counter.utils.settings import create_config_file
 from macro_counter.utils.validators import is_float
 
@@ -40,9 +41,9 @@ def get_measure(component: Component):
 
 class AppPrompt:
     def __init__(self):
-        self.settings = get_settings()
-        self.adapters = get_adapters(self.settings)
-        self.repo = component_repository_factory(self.adapters.current)
+        self.settings = AppSettings.build()
+        self.adapters = Adapters.build(self.settings)
+        self.repo = LocalComponentRepository(self.adapters.store_file)
         self.state = PromptState.STOPPED
         self.history = FileHistory(".macro_counter_history")
 
@@ -51,15 +52,8 @@ class AppPrompt:
 
             self.print(f"Empty setting file created: {self.settings.config.path}")
 
-        if self.adapters.current is self.adapters.mongo:
-            self.print("Using mongo store")
-        else:
-            if self.adapters.mongo is not None:
-                self.print("Unable to connect to the configured mongo cluster")
-
-            self.print("Using local file store")
-            if not self.adapters.local_store.exists():
-                self.adapters.local_store.write_json({})
+        if not self.adapters.store_file.exists:
+            self.repo.delete_all()
 
         self.completer = None
         self.reset_completer()
@@ -126,10 +120,16 @@ class AppPrompt:
 
         return units
 
+    def _get_attrs_fields(self):
+        if self.settings.price_enabled:
+            return attrs_fields + [price_field]
+
+        return attrs_fields
+
     def _get_attrs(self, defaults=None):
         attrs = deepcopy(defaults) or {}
 
-        for field in attrs_fields:
+        for field in self._get_attrs_fields():
             value = None
 
             if default := attrs.get(field.label):
@@ -373,14 +373,18 @@ class AppPrompt:
         ]
         present_fields.insert(0, unit_field)
 
+        if self.settings.price_enabled:
+            present_fields.append(price_field)
+
         headers = ["Name"] + [field.name for field in present_fields]
 
         total = {field.label: 0.0 for field in present_fields}
 
         for component in components:
             total[unit_field.label] += component.units
-            for k, v in component.attrs.items():
-                total[k] = total[k] + v
+
+            for k in present_fields:
+                total[k.label] = total[k.label] + component.attrs.get(k.label, 0.0)
 
         def to_percent(num, total, vv=1):
             return f"{num / (total if total else 1) * 100:.{vv}f}%"
@@ -391,12 +395,15 @@ class AppPrompt:
 
             for field in present_fields:
                 if field is unit_field:
-                    raw_data.append(str(component.units) + get_measure(component))
+                    raw_data.append(format_compact_float(component.units, 2) + get_measure(component))
                     perc_data.append(
                         to_percent(component.units, total[unit_field.label])
                     )
                 elif value := component.attrs.get(field.label):
-                    raw_data.append(value)
+                    if field is price_field:
+                        raw_data.append(format_compact_float(value, 2) + "€")
+                    else:
+                        raw_data.append(format_compact_float(value, 2))
                     perc_data.append(to_percent(value, total[field.label]))
                 else:
                     raw_data.append(None)
@@ -409,10 +416,11 @@ class AppPrompt:
 
         row = ["Total"]
         for field in present_fields:
-            if field is unit_field:
-                row.append(total[unit_field.label])
+            formatted_value = format_compact_float(total[field.label])
+            if field is price_field:
+                row.append(formatted_value + "€")
             else:
-                row.append(f"{total[field.label]:.1f}")
+                row.append(formatted_value)
 
         rows.append(row)
 

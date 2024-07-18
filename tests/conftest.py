@@ -1,16 +1,17 @@
 from pathlib import Path
 
-from hartware_lib.adapters.directory import DirectoryAdapter
+from hartware_lib.adapters.filesystem import DirectoryAdapter
+from hartware_lib.serializers import serialize
 from pytest import fixture
 
-from macro_counter.adapters import get_adapters
-from macro_counter.repositories.components import component_repository_factory
-from macro_counter.settings import get_settings
+from macro_counter.adapters import Adapters
+from macro_counter.repositories.local import LocalComponentRepository
+from macro_counter.settings import AppSettings
 
 
 @fixture(scope="function", autouse=True)
 def clean_test_directory_():
-    test_directory = DirectoryAdapter(dir_path=Path(".testing"))
+    test_directory = DirectoryAdapter(path=Path(".testing"))
     test_directory.create()
 
     yield
@@ -20,44 +21,20 @@ def clean_test_directory_():
 
 @fixture(scope="function")
 def settings():
-    yield get_settings()
+    yield AppSettings.build()
 
 
 @fixture(scope="function")
 def adapters(settings):
-    yield get_adapters(settings)
-
-
-@fixture(scope="function")
-def failing_mongo_settings(monkeypatch):
-    def get_mocked_settings():
-        settings = get_settings()
-
-        settings.mongo_settings.host = "fake.cluster"
-
-        return settings
-
-    monkeypatch.setattr("macro_counter.app.prompt.get_settings", get_mocked_settings)
-
-
-@fixture(scope="function")
-def incomplete_mongo_settings(monkeypatch):
-    def get_mocked_settings():
-        settings = get_settings()
-
-        settings.mongo_settings.host = None
-
-        return settings
-
-    monkeypatch.setattr("macro_counter.app.prompt.get_settings", get_mocked_settings)
+    yield Adapters.build(settings)
 
 
 @fixture(scope="function")
 def local_repository(adapters):
-    file_adapter = adapters.local_store
-    file_adapter.write_json({})
+    file_adapter = adapters.store_file
+    file_adapter.write(serialize({}))
 
-    repo = component_repository_factory(file_adapter)
+    repo = LocalComponentRepository(file_adapter)
 
     repo.delete_all()
 
@@ -66,15 +43,3 @@ def local_repository(adapters):
     repo.delete_all()
 
     file_adapter.delete()
-
-
-@fixture(scope="function")
-def mongo_repository(adapters):
-    mongo_adapter = adapters.mongo
-    repo = component_repository_factory(mongo_adapter)
-
-    repo.delete_all()
-
-    yield repo
-
-    repo.delete_all()

@@ -1,7 +1,19 @@
-from pydantic import ValidationError
 from pytest import mark, raises
 
-from macro_counter.models import Component, ComponentKind
+from macro_counter.models import Component, ComponentKind, Field
+
+
+@mark.parametrize(
+    "kwargs",
+    [
+        {"label": "kcal", "fullname": "Calories"},
+        {"label": "protein", "fullname": "Protein", "shortname": "Prot"},
+        {"label": "carb", "fullname": "Carb", "macro": True},
+        {"label": "fat", "fullname": "Fat", "show_percents": True},
+    ],
+)
+def test_field_model(kwargs):
+    assert Field(**kwargs)
 
 
 @mark.parametrize(
@@ -23,5 +35,5 @@ def test_component_model_with_kind_enum():
 
 
 def test_component_model_wrong_kind_exception():
-    with raises(ValidationError):
+    with raises(ValueError):
         Component(name="Vodka", kind="GASEOUS")

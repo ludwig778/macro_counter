@@ -1,6 +1,7 @@
 from pytest import fixture, raises
 
-from macro_counter.exceptions import ComponentAlreadyExist, ComponentDoesNotExist
+from macro_counter.exceptions import (ComponentAlreadyExist,
+                                      ComponentDoesNotExist)
 from macro_counter.models import Component, ComponentKind
 
 

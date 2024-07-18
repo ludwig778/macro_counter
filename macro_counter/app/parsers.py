@@ -1,15 +1,5 @@
-from pyparsing import (
-    CaselessLiteral,
-    Empty,
-    Group,
-    Optional,
-    Suppress,
-    Word,
-    ZeroOrMore,
-    alphas,
-    delimitedList,
-    nums,
-)
+from pyparsing import (CaselessLiteral, Empty, Group, Optional, Suppress, Word,
+                       ZeroOrMore, alphas, delimitedList, nums)
 
 integer = Word(nums)
 float_num = Word(nums + ".")
