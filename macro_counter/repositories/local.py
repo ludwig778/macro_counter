@@ -15,7 +15,7 @@ class LocalComponentRepository(AbstractComponentRepository):
         self.store = store
 
     def save(self, data: Dict) -> None:
-        self.store.write(serialize(data))
+        self.store.write(serialize(data, indent=4))
 
     def read(self) -> Dict:
         return deserialize(self.store.read())
