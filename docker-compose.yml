@@ -7,17 +7,5 @@ services:
       - .:/app
       - /app/.poetry
     environment:
-      MACRO_COUNTER_MONGODB_DATABASE: macro_counter
-      MACRO_COUNTER_MONGODB_HOST: mongodb
-      MACRO_COUNTER_MONGODB_USERNAME: user
-      MACRO_COUNTER_MONGODB_PASSWORD: password123
       MACRO_COUNTER_CONFIG_PATH: /app/.testing/macro_counter/config.json
       MACRO_COUNTER_STORE_PATH: /app/.testing/macro_counter/store.json
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: password123
