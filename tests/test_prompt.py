@@ -589,14 +589,14 @@ def test_prompt_show_single_component(prompt_redirect, local_repository):
     assert prompt_redirect.outputs == [
         "Empty setting file created: .testing/macro_counter/config.json",
         ">>> Orange_Juice_100ml",
-        "--------  --------  -----\n"
-        "Calories  110.0\n"
-        "Units     100.0 ml\n"
-        "Protein   2.0       6.9%\n"
-        "Carb      27.0      93.1%\n"
-        "Fiber     1.0\n"
-        "- Sugar   20.0      69.0%\n"
-        "--------  --------  -----",
+        "--------  ------  -----\n"
+        "Calories  110\n"
+        "Units     100 ml\n"
+        "Protein   2       6.9%\n"
+        "Carb      27      93.1%\n"
+        "Fiber     1\n"
+        "- Sugar   20      69.0%\n"
+        "--------  ------  -----",
         "EOF : quitting...",
     ]
 
@@ -609,18 +609,45 @@ def test_prompt_show_summed_multiple_component(prompt_redirect, local_repository
     assert prompt_redirect.outputs == [
         "Empty setting file created: .testing/macro_counter/config.json",
         ">>> Tomato_100gr + Mozzarella_100gr",
-        "----------------------  --------  -----\n"
-        "Calories                277.0\n"
-        "Units                   200.0 gr\n"
-        "Protein                 20.8      44.7%\n"
-        "Carb                    6.1       13.1%\n"
+        "----------------------  ------  -----\n"
+        "Calories                277\n"
+        "Units                   200 gr\n"
+        "Protein                 20.79   44.7%\n"
+        "Carb                    6.1     13.1%\n"
         "Fiber                   1.2\n"
-        "- Sugar                 3.0       6.5%\n"
-        "Fat                     19.6      42.2%\n"
-        "- Saturated fat         12.3      26.5%\n"
-        "- Mono insaturated fat  5.3       11.4%\n"
-        "- Poly insaturated fat  0.6       1.3%\n"
-        "----------------------  --------  -----",
+        "- Sugar                 3       6.5%\n"
+        "Fat                     19.59   42.2%\n"
+        "- Saturated fat         12.3    26.5%\n"
+        "- Mono insaturated fat  5.3     11.4%\n"
+        "- Poly insaturated fat  0.6     1.3%\n"
+        "----------------------  ------  -----",
+        "EOF : quitting...",
+    ]
+
+
+def test_prompt_show_summed_multiple_component_with_price_enabled(prompt_redirect, local_repository):
+    prompt_redirect.set_inputs("Tomato_100gr + Mozzarella_100gr")
+
+    prompt = MainPrompt()
+    prompt.settings.price_enabled = True
+    prompt.loop()
+
+    assert prompt_redirect.outputs == [
+        "Empty setting file created: .testing/macro_counter/config.json",
+        ">>> Tomato_100gr + Mozzarella_100gr",
+        "----------------------  ------  -----\n"
+        "Calories                277\n"
+        "Units                   200 gr\n"
+        "Protein                 20.79   44.7%\n"
+        "Carb                    6.1     13.1%\n"
+        "Fiber                   1.2\n"
+        "- Sugar                 3       6.5%\n"
+        "Fat                     19.59   42.2%\n"
+        "- Saturated fat         12.3    26.5%\n"
+        "- Mono insaturated fat  5.3     11.4%\n"
+        "- Poly insaturated fat  0.6     1.3%\n"
+        "Price                   5€\n"
+        "----------------------  ------  -----",
         "EOF : quitting...",
     ]
 

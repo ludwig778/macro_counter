@@ -337,29 +337,35 @@ class AppPrompt:
 
         rows = []
 
-        for field in attrs_fields:
+        for field in self._get_attrs_fields():
             value = component.attrs.get(field.label)
 
             if not value:
                 continue
 
             field_label_cell = field.fullname
-            if field.show_percents and not field.macro:
+            if field.show_percents and not field.macro and field is not price_field:
                 field_label_cell = "- " + field_label_cell
 
-            value_cell = f"{value:.1f}"
+            value_cell = format_compact_float(value, 2)
+
+            if field is price_field:
+                value_cell += "€"
 
             percent_cell = None
             if field.show_percents:
                 percent_cell = f"{value / macro_total * 100:.1f}%"
 
-            rows.append([field_label_cell, value_cell, percent_cell])
+            if field is price_field:
+                rows.append([field_label_cell, value_cell])
+            else:
+                rows.append([field_label_cell, value_cell, percent_cell])
 
         rows.insert(
             1,
             [
                 unit_field.fullname,
-                f"{component.units} {get_measure(component)}",
+                f"{format_compact_float(component.units, 2)} {get_measure(component)}",
             ],
         )
 
