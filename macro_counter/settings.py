@@ -5,7 +5,7 @@ from hartware_lib.adapters.filesystem import FileAdapter
 from hartware_lib.settings import load_settings, load_settings_from_file
 
 BASE_PATH: Path = Path.home() / ".config" / "macro_counter"
-DEFAULT_CONFIG_PATH: Path = BASE_PATH / "config.yaml"
+DEFAULT_CONFIG_PATH: Path = BASE_PATH / "config.json"
 DEFAULT_STORE_PATH: Path = BASE_PATH / "store.json"
 
 
